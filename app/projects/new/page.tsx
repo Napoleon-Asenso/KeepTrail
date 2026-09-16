@@ -3,8 +3,22 @@ import Link from "next/link";
 import { redirect } from "next/navigation";
 import { getCurrentUser } from "@/lib/auth";
 import { CreateForm } from "@/components/create-form";
+import type { Metadata } from "next";
 
 export const dynamic = "force-dynamic";
+
+export const metadata: Metadata = {
+  title: "Create New Project",
+  description:
+    "Add a new personal project to your KeepTrail workspace. All entries are protected with strict tenant isolation.",
+  alternates: {
+    canonical: "/projects/new",
+  },
+  robots: {
+    index: false,
+    follow: false,
+  },
+};
 
 export default async function NewProjectPage() {
   const user = await getCurrentUser();

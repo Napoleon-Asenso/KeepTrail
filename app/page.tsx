@@ -2,6 +2,17 @@ import { redirect } from "next/navigation";
 import { getCurrentUser } from "@/lib/auth";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
+import type { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: "Welcome",
+  description:
+    "Welcome to KeepTrail, your secure personal projects management workspace with audit trails.",
+  robots: {
+    index: false,
+    follow: false,
+  },
+};
 
 export default async function HomePage() {
   const user = await getCurrentUser();

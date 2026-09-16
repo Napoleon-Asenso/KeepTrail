@@ -5,12 +5,62 @@ import { prisma } from "@/lib/prisma";
 import { getCurrentUser } from "@/lib/auth";
 import { Badge } from "@/components/ui/badge";
 import { DeleteModal } from "@/components/delete-modal";
+import type { Metadata } from "next";
 
 export const dynamic = "force-dynamic";
 
 interface ProjectDetailPageProps {
   params: {
     slug: string;
+  };
+}
+
+export async function generateMetadata({
+  params,
+}: ProjectDetailPageProps): Promise<Metadata> {
+  const user = await getCurrentUser();
+
+  if (!user) {
+    return {
+      title: "Project",
+      robots: { index: false, follow: false },
+    };
+  }
+
+  // Scoped lookup with SQL-level tenant isolation (never fetch by slug alone)
+  const record = await prisma.record.findUnique({
+    where: {
+      userId_slug: {
+        userId: user.id,
+        slug: params.slug,
+      },
+    },
+    select: {
+      title: true,
+      description: true,
+    },
+  });
+
+  if (!record) {
+    return {
+      title: "Not Found",
+      description: "This project does not exist or is not accessible.",
+      robots: { index: false, follow: false },
+    };
+  }
+
+  return {
+    title: record.title,
+    description:
+      record.description ??
+      `Project details for ${record.title} in your secure KeepTrail workspace.`,
+    alternates: {
+      canonical: `/projects/${params.slug}`,
+    },
+    robots: {
+      index: false,
+      follow: false,
+    },
   };
 }
 

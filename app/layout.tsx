@@ -1,13 +1,57 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import Link from "next/link";
 import "./globals.css";
 import { getCurrentUser } from "@/lib/auth";
 import { SessionIndicator } from "@/components/session-indicator";
 
+const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000";
+
 export const metadata: Metadata = {
-  title: "KeepTrail — Personal Projects Management",
+  metadataBase: new URL(siteUrl),
+  title: {
+    default: "KeepTrail — Personal Projects Management",
+    template: "%s | KeepTrail",
+  },
   description:
-    "Secure personal projects management micro-slice with tenant isolation, NanoID routing, and transactional auditing.",
+    "KeepTrail is a secure personal projects management tool with tenant isolation, NanoID routing, and transactional audit trails.",
+  applicationName: "KeepTrail",
+  keywords: [
+    "personal projects",
+    "project management",
+    "task tracking",
+    "audit trail",
+    "tenant isolation",
+  ],
+  authors: [{ name: "KeepTrail" }],
+  creator: "KeepTrail",
+  alternates: {
+    canonical: "/",
+  },
+  robots: {
+    index: true,
+    follow: true,
+  },
+  openGraph: {
+    type: "website",
+    locale: "en_US",
+    url: "/",
+    siteName: "KeepTrail",
+    title: "KeepTrail — Personal Projects Management",
+    description:
+      "KeepTrail is a secure personal projects management tool with tenant isolation, NanoID routing, and transactional audit trails.",
+  },
+  twitter: {
+    card: "summary",
+    title: "KeepTrail — Personal Projects Management",
+    description:
+      "KeepTrail is a secure personal projects management tool with tenant isolation, NanoID routing, and transactional audit trails.",
+  },
+};
+
+export const viewport: Viewport = {
+  width: "device-width",
+  initialScale: 1,
+  themeColor: "#0369a0",
 };
 
 export default async function RootLayout({

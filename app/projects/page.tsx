@@ -6,8 +6,22 @@ import { getCurrentUser } from "@/lib/auth";
 import { EmptyState } from "@/components/empty-state";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import type { Metadata } from "next";
 
 export const dynamic = "force-dynamic";
+
+export const metadata: Metadata = {
+  title: "Projects",
+  description:
+    "View and manage your personal projects in KeepTrail — a secure, tenant-isolated project tracking workspace.",
+  alternates: {
+    canonical: "/projects",
+  },
+  robots: {
+    index: false,
+    follow: false,
+  },
+};
 
 export default async function ProjectsPage() {
   const user = await getCurrentUser();
