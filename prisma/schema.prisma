@@ -1,0 +1,50 @@
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+model User {
+  id        String     @id @default(uuid())
+  email     String     @unique
+  createdAt DateTime   @default(now()) @map("created_at")
+  records   Record[]
+  auditLogs AuditLog[]
+
+  @@map("users")
+}
+
+model Record {
+  id          Int      @id @default(autoincrement())
+  slug        String   @unique @default(nanoid())
+  userId      String   @map("user_id")
+  title       String
+  description String?
+  status      String   @default("ACTIVE")
+  createdAt   DateTime @default(now()) @map("created_at")
+  updatedAt   DateTime @updatedAt @map("updated_at")
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, slug])
+  @@index([userId, createdAt])
+  @@map("records")
+}
+
+model AuditLog {
+  id           Int      @id @default(autoincrement())
+  userId       String   @map("user_id")
+  action       String   // "DELETE"
+  recordSlug   String   @map("record_slug")
+  metadataJson Json?    @map("metadata_json")
+  createdAt    DateTime @default(now()) @map("created_at")
+
+  user User @relation(fields: [userId], references: [id], onDelete: NoAction)
+
+  @@index([userId])
+  @@index([recordSlug])
+  @@map("audit_logs")
+}

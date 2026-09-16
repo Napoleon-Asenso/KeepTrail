@@ -1,0 +1,30 @@
+{
+  "name": "keeptrail",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev",
+    "build": "prisma generate && next build",
+    "start": "next start",
+    "lint": "next lint",
+    "tokens": "node scripts/generate-css-variables.js"
+  },
+  "dependencies": {
+    "@prisma/client": "^5.19.1",
+    "nanoid": "^3.3.7",
+    "next": "^14.2.13",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
+    "zod": "^3.23.8"
+  },
+  "devDependencies": {
+    "@types/node": "^20.16.5",
+    "@types/react": "^18.3.5",
+    "@types/react-dom": "^18.3.0",
+    "autoprefixer": "^10.4.20",
+    "postcss": "^8.4.47",
+    "prisma": "^5.19.1",
+    "tailwindcss": "^3.4.11",
+    "typescript": "^5.6.2"
+  }
+}
