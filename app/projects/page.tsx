@@ -51,7 +51,7 @@ export default async function ProjectsPage() {
   return (
     <div className="space-y-6">
       {/* Header section with title and CTA button */}
-      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 pb-6 border-b border-[var(--outline-variant-color)]">
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 pb-6">
         <div>
           <h1 className="text-2xl sm:text-3xl font-bold font-display tracking-tight text-[var(--on-surface-color)]">
             Projects

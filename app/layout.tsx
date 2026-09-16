@@ -97,10 +97,6 @@ export default async function RootLayout({
         <main className="flex-1 max-w-6xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-8">
           {children}
         </main>
-
-        <footer className="border-t border-[var(--outline-variant-color)] py-6 text-center text-xs text-[var(--outline-color)]">
-          <p>KeepTrail &bull; Assessment 4: The Records and Access Slice &bull; Personal Projects Management</p>
-        </footer>
       </body>
     </html>
   );

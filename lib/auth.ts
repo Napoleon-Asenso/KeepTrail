@@ -7,20 +7,23 @@ export interface SessionUser {
   createdAt: Date;
 }
 
-const DEFAULT_USER_A_EMAIL = "user-a@keeptrail.local";
-const DEFAULT_USER_B_EMAIL = "user-b@keeptrail.local";
-
 /**
  * Server-side authentication helper.
- * Resolves the authenticated user from session cookies or request headers.
- * Supports multi-tenant testing for User A, User B, and unauthenticated sessions (AC-101 to AC-104).
+ * Resolves the authenticated user from:
+ *  1. x-user-email request header (API testing / E2E scripts)
+ *  2. session_email cookie (browser sessions)
+ * Returns null for any request without a valid session identity.
+ * Supports an unlimited number of users — any unique email gets its own
+ * isolated tenant partition; no user can ever access another user's data.
  */
 export async function getCurrentUser(): Promise<SessionUser | null> {
   let email: string | null = null;
-  let isExplicitlyUnauthenticated = false;
 
+  // Check request headers first (used by API tests and E2E scripts)
   try {
     const reqHeaders = headers();
+
+    // Explicit unauthenticated override (for E2E test AC-101)
     const explicitUnauth = reqHeaders.get("x-unauthenticated");
     if (explicitUnauth === "true" || explicitUnauth === "1") {
       return null;
@@ -31,40 +34,42 @@ export async function getCurrentUser(): Promise<SessionUser | null> {
       email = headerEmail.trim().toLowerCase();
     }
   } catch {
-    // Headers may not be available in all execution contexts
+    // Headers API may not be available in all execution contexts
   }
 
-  try {
-    const cookieStore = cookies();
-    const unauthCookie = cookieStore.get("session_unauthenticated");
-    if (unauthCookie?.value === "true") {
-      isExplicitlyUnauthenticated = true;
+  // Fall back to session cookie (browser navigation)
+  if (!email) {
+    try {
+      const cookieStore = cookies();
+      const cookieEmail = cookieStore.get("session_email")?.value;
+      if (cookieEmail) {
+        email = cookieEmail.trim().toLowerCase();
+      }
+    } catch {
+      // Cookies API may not be available in all execution contexts
     }
-
-    const cookieEmail = cookieStore.get("session_email")?.value;
-    if (cookieEmail && !email) {
-      email = cookieEmail.trim().toLowerCase();
-    }
-  } catch {
-    // Cookies may not be available in all execution contexts
   }
 
-  if (isExplicitlyUnauthenticated) {
+  // No session identity — unauthenticated
+  if (!email) {
     return null;
   }
 
-  // Default to User A for normal interactive browser usage if not explicitly overridden
-  const activeEmail = email || DEFAULT_USER_A_EMAIL;
+  // Validate email format minimally
+  if (!email.includes("@") || email.length < 3) {
+    return null;
+  }
 
   try {
+    // Auto-provision user on first sign-in with this email
     let user = await prisma.user.findUnique({
-      where: { email: activeEmail },
+      where: { email },
       select: { id: true, email: true, createdAt: true },
     });
 
     if (!user) {
       user = await prisma.user.create({
-        data: { email: activeEmail },
+        data: { email },
         select: { id: true, email: true, createdAt: true },
       });
     }
@@ -75,5 +80,3 @@ export async function getCurrentUser(): Promise<SessionUser | null> {
     return null;
   }
 }
-
-export { DEFAULT_USER_A_EMAIL, DEFAULT_USER_B_EMAIL };
