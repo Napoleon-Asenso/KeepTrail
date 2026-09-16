@@ -144,8 +144,29 @@ export default async function ProjectDetailPage({
             </p>
           </div>
 
-          {/* Screen 4: Delete Confirmation Trigger */}
-          <div className="flex-shrink-0">
+          {/* Screen 4: Edit & Delete Actions */}
+          <div className="flex-shrink-0 flex items-center gap-2">
+            <Link
+              href={`/projects/${record.slug}/edit`}
+              className="inline-flex items-center justify-center text-sm font-medium px-4 py-2 gap-2 border border-[var(--outline-variant-color)] bg-transparent text-[var(--on-surface-color)] hover:bg-[var(--surface-container-high-color)] rounded transition-colors cursor-pointer focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--outline-color)]"
+              data-testid="edit-project-link"
+            >
+              <svg
+                className="w-4 h-4"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+                strokeWidth="2"
+                aria-hidden="true"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"
+                />
+              </svg>
+              Edit
+            </Link>
             <DeleteModal slug={record.slug} projectTitle={record.title} />
           </div>
         </div>

@@ -18,4 +18,7 @@ export const projectCreateSchema = z.object({
     .transform((val) => (val === "" || val === null || val === undefined ? null : val)),
 });
 
+export const projectUpdateSchema = projectCreateSchema;
+
 export type ProjectCreateInput = z.infer<typeof projectCreateSchema>;
+export type ProjectUpdateInput = z.infer<typeof projectUpdateSchema>;
